@@ -6,13 +6,19 @@ const fs = require('fs');
 ///////////////////////////////
 // POST
 ///////////////////////////////
-exports.createThing = (req, res, next) => {
+exports.createSauce = (req, res, next) => {
     const sauce = new Sauce({
-        title: req.body.title,
+        userId: req.body.userId,
+        name: req.body.name,
+        manufacturer: req.body.manufacturer,
         description: req.body.description,
-        imageUrl: req.body.imageUrl,
-        price: req.body.price,
-        userId: req.body.userId
+        mainPepper: req.body.mainPepper,
+        imageURL: req.body.imageURL,
+        heat: req.body.heat,
+        likes: req.body.likes,
+        dislikes: req.body.dislikes,
+        usersLiked: req.body.usersLiked,
+        usersDisliked: req.body.usersDisliked
     });
     sauce.save().then(
         () => {
@@ -32,11 +38,11 @@ exports.createThing = (req, res, next) => {
 ///////////////////////////////
 // POST IMAGES
 ///////////////////////////////
-exports.createThing = (req, res, next) => {
-    const thingObject = JSON.parse(req.body.sauce);
-    delete thingObject._id;
+exports.createSauce = (req, res, next) => {
+    const sauceObject = JSON.parse(req.body.sauce);
+    delete sauceObject._id;
     const sauce = new Sauce({
-        ...thingObject,
+        ...sauceObject,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
     sauce.save()
@@ -51,7 +57,7 @@ exports.createThing = (req, res, next) => {
 ///////////////////////////////
 // GET BY ID
 ///////////////////////////////
-exports.getOneThing = (req, res, next) => {
+exports.getOneSauce = (req, res, next) => {
     Sauce.findOne({
         _id: req.params.id
     }).then(
@@ -70,14 +76,19 @@ exports.getOneThing = (req, res, next) => {
 ///////////////////////////////
 // PUT
 ///////////////////////////////
-exports.modifyThing = (req, res, next) => {
+exports.modifySauce = (req, res, next) => {
     const sauce = new Sauce({
-        _id: req.params.id,
-        title: req.body.title,
+        userId: req.body.userId,
+        name: req.body.name,
+        manufacturer: req.body.manufacturer,
         description: req.body.description,
-        imageUrl: req.body.imageUrl,
-        price: req.body.price,
-        userId: req.body.userId
+        mainPepper: req.body.mainPepper,
+        imageURL: req.body.imageURL,
+        heat: req.body.heat,
+        likes: req.body.likes,
+        dislikes: req.body.dislikes,
+        usersLiked: req.body.usersLiked,
+        usersDisliked: req.body.usersDisliked
     });
     Sauce.updateOne({
         _id: req.params.id
@@ -99,7 +110,7 @@ exports.modifyThing = (req, res, next) => {
 ///////////////////////////////
 // PUT IMAGES
 ///////////////////////////////
-exports.modifyThing = (req, res, next) => {
+exports.modifySauce = (req, res, next) => {
     const thingObject = req.file ? {
         ...JSON.parse(req.body.sauce),
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
@@ -123,7 +134,7 @@ exports.modifyThing = (req, res, next) => {
 ///////////////////////////////
 // DELETE
 ///////////////////////////////
-exports.deleteThing = (req, res, next) => {
+exports.deleteSauce = (req, res, next) => {
     Sauce.deleteOne({
         _id: req.params.id
     }).then(
@@ -144,7 +155,7 @@ exports.deleteThing = (req, res, next) => {
 ///////////////////////////////
 // DELETE IMAGES
 ///////////////////////////////
-exports.deleteThing = (req, res, next) => {
+exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({
             _id: req.params.id
         })
@@ -169,7 +180,7 @@ exports.deleteThing = (req, res, next) => {
 ///////////////////////////////
 // GET ALL
 ///////////////////////////////
-exports.getAllStuff = (req, res, next) => {
+exports.getAllSauces = (req, res, next) => {
     Sauce.find().then(
         (things) => {
             res.status(200).json(things);

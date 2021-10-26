@@ -43,11 +43,11 @@ const sauceSchema = mongoose.Schema({
     required: true
   },
   usersLiked: {
-    type: ["String <userId>"],
+    type: [String, "<userId>"],
     required: true
   },
   usersDisliked: {
-    type: ["String <userId>"],
+    type: [String, "<userId>"],
     required: true
   },
 });
