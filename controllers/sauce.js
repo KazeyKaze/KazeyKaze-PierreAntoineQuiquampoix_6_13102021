@@ -2,6 +2,12 @@ const Sauce = require('../models/sauce');
 const fs = require('fs');
 
 
+///////////////////////////////
+// LIKE
+///////////////////////////////
+exports.like = (req, res, next) => {
+    
+};
 
 ///////////////////////////////
 // POST
