@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const saucesRoutes = require('./routes/sauces');
 const userRoutes = require('./routes/user');
 const path = require('path');
+const helmet = require('helmet');
 
 
 
@@ -34,6 +35,7 @@ app.use(express.json());
 app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/sauces', saucesRoutes);
 app.use('/api/auth', userRoutes);
+app.use(helmet());
 
 
 
