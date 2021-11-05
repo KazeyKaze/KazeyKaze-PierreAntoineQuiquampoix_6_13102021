@@ -4,6 +4,7 @@ const saucesRoutes = require('./routes/sauces');
 const userRoutes = require('./routes/user');
 const path = require('path');
 const helmet = require('helmet');
+const rateLimit = require("express-rate-limit");
 
 
 
@@ -29,6 +30,14 @@ app.use((req, res, next) => {
     next();
 });
 
+///////////////////////////////
+// RATE LIMIT
+///////////////////////////////
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+});
+
 
 
 app.use(express.json());
@@ -36,6 +45,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/sauces', saucesRoutes);
 app.use('/api/auth', userRoutes);
 app.use(helmet());
+app.use(limiter);
 
 
 
