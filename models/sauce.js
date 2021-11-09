@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 
 ///////////////////////////////
-// STUFF'S SCHEMA
+// SAUCES'S SCHEMA
 ///////////////////////////////
 const sauceSchema = mongoose.Schema({
   userId: {
