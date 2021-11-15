@@ -1,6 +1,6 @@
 const Sauce = require('../models/sauce');
 const fs = require('fs');
-const sauce = require('../models/sauce');
+const jwt = require('jsonwebtoken');
 
 
 
@@ -46,51 +46,71 @@ exports.getOneSauce = (req, res, next) => {
 // PUT
 ///////////////////////////////
 exports.modifySauce = (req, res, next) => {
-    const thingObject = req.file ? {
-        ...JSON.parse(req.body.sauce),
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : {
-        ...req.body
-    };
-    Sauce.updateOne({
-            _id: req.params.id
-        }, {
-            ...thingObject,
-            _id: req.params.id
+    const token = req.headers.authorization.split(' ')[1]; // Isole le token contenu dans la requête
+    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET'); // Décode le token sous forme d'objet
+    const userId = decodedToken.userId; // Stock le userId
+
+    if (req.body.userId === userId) {
+        const thingObject = req.file ? {
+            ...JSON.parse(req.body.sauce),
+            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        } : {
+            ...req.body
+        };
+        Sauce.updateOne({
+                _id: req.params.id
+            }, {
+                ...thingObject,
+                _id: req.params.id
+            })
+            .then(() => res.status(200).json({
+                message: 'Sauce modifié !'
+            }))
+            .catch(error => res.status(400).json({
+                error
+            }));
+    } else {
+        res.status(403).json({
+            message: '403: unauthorized request !'
         })
-        .then(() => res.status(200).json({
-            message: 'Sauce modifié !'
-        }))
-        .catch(error => res.status(400).json({
-            error
-        }));
-};
+    };
+}
 
 ///////////////////////////////
 // DELETE
 ///////////////////////////////
 exports.deleteSauce = (req, res, next) => {
+    const token = req.headers.authorization.split(' ')[1]; // Isole le token contenu dans la requête
+    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET'); // Décode le token sous forme d'objet
+    const userId = decodedToken.userId; // Stock le userId
+
     Sauce.findOne({
             _id: req.params.id
         })
         .then(sauce => {
-            const filename = sauce.imageUrl.split('/images/')[1];
-            fs.unlink(`images/${filename}`, () => {
-                Sauce.deleteOne({
-                        _id: req.params.id
-                    })
-                    .then(() => res.status(200).json({
-                        message: 'Objet supprimé !'
-                    }))
-                    .catch(error => res.status(400).json({
-                        error
-                    }));
-            });
+            if (sauce.userId === userId) {
+                const filename = sauce.imageUrl.split('/images/')[1];
+                fs.unlink(`images/${filename}`, () => {
+                    Sauce.deleteOne({
+                            _id: req.params.id
+                        })
+                        .then(() => res.status(200).json({
+                            message: 'Objet supprimé !'
+                        }))
+                        .catch(error => res.status(400).json({
+                            error
+                        }));
+                });
+            } else {
+                res.status(403).json({
+                    message: '403: unauthorized request !'
+                })
+            };
         })
         .catch(error => res.status(500).json({
             error
         }));
-};
+}
 
 ///////////////////////////////
 // GET ALL
