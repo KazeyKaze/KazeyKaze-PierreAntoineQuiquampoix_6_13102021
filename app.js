@@ -11,7 +11,7 @@ const rateLimit = require("express-rate-limit");
 ///////////////////////////////
 // MONGO'S CONNECTION
 ///////////////////////////////
-mongoose.connect('mongodb+srv://Kazey:0000@cluster0.ellto.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
+mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ellto.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     })

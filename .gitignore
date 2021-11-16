@@ -1,3 +1,4 @@
 node_modules
 images
-.env
+# Le ".env" n'est volontairement pas ajouté ici afin que vous puissiez
+# vous connecter à mon projet.
