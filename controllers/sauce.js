@@ -46,11 +46,7 @@ exports.getOneSauce = (req, res, next) => {
 // PUT
 ///////////////////////////////
 exports.modifySauce = (req, res, next) => {
-    const token = req.headers.authorization.split(' ')[1]; // Isole le token contenu dans la requête
-    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET'); // Décode le token sous forme d'objet
-    const userId = decodedToken.userId; // Stock le userId
-
-    if (req.body.userId === userId) {
+    if (req.body.userId === req.token.userId) {
         const thingObject = req.file ? {
             ...JSON.parse(req.body.sauce),
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
@@ -80,15 +76,11 @@ exports.modifySauce = (req, res, next) => {
 // DELETE
 ///////////////////////////////
 exports.deleteSauce = (req, res, next) => {
-    const token = req.headers.authorization.split(' ')[1]; // Isole le token contenu dans la requête
-    const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET'); // Décode le token sous forme d'objet
-    const userId = decodedToken.userId; // Stock le userId
-
     Sauce.findOne({
             _id: req.params.id
         })
         .then(sauce => {
-            if (sauce.userId === userId) {
+            if (sauce.userId === req.token.userId) {
                 const filename = sauce.imageUrl.split('/images/')[1];
                 fs.unlink(`images/${filename}`, () => {
                     Sauce.deleteOne({
