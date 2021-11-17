@@ -125,24 +125,24 @@ exports.getAllSauces = (req, res, next) => {
 // LIKE
 ///////////////////////////////
 exports.like = (req, res, next) => {
-    const userId = req.body.userId;
+    const userId = req.body.userId; // Constante créée afin de réduire et clarifier le code du switch
 
-    Sauce.findOne({
+    Sauce.findOne({ // Je cible ma sauce
             _id: req.params.id
         })
         .then(sauce => {
             switch (req.body.like) {
-                case 0:
-                    if (sauce.usersLiked.includes(userId)) sauce.usersLiked = sauce.usersLiked.filter(user => user !== userId);
-                    if (sauce.usersDisliked.includes(userId)) sauce.usersDisliked = sauce.usersDisliked.filter(user => user !== userId);
+                case 0: // Si l'état du like est nul
+                    if (sauce.usersLiked.includes(userId)) sauce.usersLiked = sauce.usersLiked.filter(user => user !== userId); // Je vérifie et corrige le tableau en retirant le userId des likes
+                    if (sauce.usersDisliked.includes(userId)) sauce.usersDisliked = sauce.usersDisliked.filter(user => user !== userId); // Je vérifie et corrige le tableau en retirant le userId des dislikes
                     break;
-                case 1:
-                    if (!sauce.usersLiked.includes(userId)) sauce.usersLiked.push(userId);
-                    if (sauce.usersDisliked.includes(userId)) sauce.usersDisliked = sauce.usersDisliked.filter(user => user !== userId);
+                case 1: // Si l'état du like est like
+                    if (!sauce.usersLiked.includes(userId)) sauce.usersLiked.push(userId); // Je vérifie et corrige le tableau en ajoutant le userId dans les likes
+                    if (sauce.usersDisliked.includes(userId)) sauce.usersDisliked = sauce.usersDisliked.filter(user => user !== userId); // Je vérifie et corrige le tableau en retirant le userId des dislikes
                     break;
-                case -1:
-                    if (sauce.usersLiked.includes(userId)) sauce.usersLiked = sauce.usersLiked.filter(user => user !== userId);
-                    if (!sauce.usersDisliked.includes(userId)) sauce.usersDisliked.push(userId);
+                case -1: // Si l'état du like est dislike
+                    if (sauce.usersLiked.includes(userId)) sauce.usersLiked = sauce.usersLiked.filter(user => user !== userId); // Je vérifie et corrige le tableau en retirant le userId des likes
+                    if (!sauce.usersDisliked.includes(userId)) sauce.usersDisliked.push(userId); // Je vérifie et corrige le tableau en ajoutant le userId dans les dislikes
                     break;
                 default:
                     res.status(400).json({
@@ -150,10 +150,10 @@ exports.like = (req, res, next) => {
                     });
             }
 
-            sauce.likes = sauce.usersLiked.length;
-            sauce.dislikes = sauce.usersDisliked.length;
+            sauce.likes = sauce.usersLiked.length; // Le compteur de likes est égale au nombre d'utilisateurs contenu le tableau des utilisateurs qui ont aimé
+            sauce.dislikes = sauce.usersDisliked.length; // Le compteur de dislikes est égale au nombre d'utilisateurs contenu le tableau des utilisateurs qui n'ont pas aimé
 
-            Sauce.updateOne({
+            Sauce.updateOne({ // Puis je mets la sauce à jour
                     _id: req.params.id
                 }, sauce)
                 .then(res.status(200).json({

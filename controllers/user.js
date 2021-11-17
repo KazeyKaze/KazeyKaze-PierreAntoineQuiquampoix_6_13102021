@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 // SIGNUP
 ///////////////////////////////
 exports.signup = (req, res, next) => {
-    bcrypt.hash(req.body.password, 10)
+    bcrypt.hash(req.body.password, 10) // Je hash le MDP et le sel 10 fois
         .then(hash => {
             const user = new User({
                 email: req.body.email,
@@ -31,7 +31,7 @@ exports.signup = (req, res, next) => {
 // LOGIN
 ///////////////////////////////
 exports.login = (req, res, next) => {
-    User.findOne({
+    User.findOne({ // Je cible et vérifie l'existence de l'utilisateur
             email: req.body.email
         })
         .then(user => {
@@ -40,7 +40,7 @@ exports.login = (req, res, next) => {
                     error: 'Utilisateur non trouvé !'
                 });
             }
-            bcrypt.compare(req.body.password, user.password)
+            bcrypt.compare(req.body.password, user.password) // Je compare le MDP entré et celui de la DB
                 .then(valid => {
                     if (!valid) {
                         return res.status(401).json({
@@ -52,7 +52,7 @@ exports.login = (req, res, next) => {
                         token: jwt.sign({
                                 userId: user._id
                             },
-                            process.env.JWT_SECRET_KEY, {
+                            process.env.JWT_SECRET_KEY, { // Je cache cette donnée avec le .env
                                 expiresIn: '24h'
                             }
                         )

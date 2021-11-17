@@ -7,7 +7,7 @@ const multer = require('../middleware/multer-config');
 
 
 ///////////////////////////////
-// ROUTER
+// ROUTER (protection de chaque route par le middleware d'authentification)
 ///////////////////////////////
 router.post('/', auth, multer, sauceCtrl.createSauce);
 router.post('/:id/like', auth, sauceCtrl.like);
