@@ -50,7 +50,7 @@ exports.modifySauce = (req, res, next) => {
             _id: req.params.id
         })
         .then(sauce => {
-            if (sauce.userId === req.token.userId) {
+            if (sauce.userId === req.token.userId) { // Vérification de l'égalité entre le userId de la sauce et celui du token
                 const thingObject = req.file ? {
                     ...JSON.parse(req.body.sauce),
                     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
@@ -85,7 +85,7 @@ exports.deleteSauce = (req, res, next) => {
             _id: req.params.id
         })
         .then(sauce => {
-            if (sauce.userId === req.token.userId) {
+            if (sauce.userId === req.token.userId) { // Vérification de l'égalité entre le userId de la sauce et celui du token
                 const filename = sauce.imageUrl.split('/images/')[1];
                 fs.unlink(`images/${filename}`, () => {
                     Sauce.deleteOne({
