@@ -46,30 +46,35 @@ exports.getOneSauce = (req, res, next) => {
 // PUT
 ///////////////////////////////
 exports.modifySauce = (req, res, next) => {
-    if (req.body.userId === req.token.userId) {
-        const thingObject = req.file ? {
-            ...JSON.parse(req.body.sauce),
-            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        } : {
-            ...req.body
-        };
-        Sauce.updateOne({
-                _id: req.params.id
-            }, {
-                ...thingObject,
-                _id: req.params.id
-            })
-            .then(() => res.status(200).json({
-                message: 'Sauce modifié !'
-            }))
-            .catch(error => res.status(400).json({
-                error
-            }));
-    } else {
-        res.status(403).json({
-            message: '403: unauthorized request !'
+    Sauce.findOne({
+            _id: req.params.id
         })
-    };
+        .then(sauce => {
+            if (sauce.userId === req.token.userId) {
+                const thingObject = req.file ? {
+                    ...JSON.parse(req.body.sauce),
+                    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                } : {
+                    ...req.body
+                };
+                Sauce.updateOne({
+                        _id: req.params.id
+                    }, {
+                        ...thingObject,
+                        _id: req.params.id
+                    })
+                    .then(() => res.status(200).json({
+                        message: 'Sauce modifié !'
+                    }))
+                    .catch(error => res.status(400).json({
+                        error
+                    }));
+            } else {
+                res.status(403).json({
+                    message: '403: unauthorized request !'
+                })
+            }
+        });
 }
 
 ///////////////////////////////
