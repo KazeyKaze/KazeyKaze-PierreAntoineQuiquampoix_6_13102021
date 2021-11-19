@@ -1,4 +1,4 @@
-const Sauce = require('../models/Sauce');
+const Sauce = require('../models/sauce');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
@@ -51,7 +51,7 @@ exports.modifySauce = (req, res, next) => {
         })
         .then(sauce => {
             if (sauce.userId === req.token.userId) { // Vérification de l'égalité entre le userId de la sauce et celui du token
-                const thingObject = req.file ? {
+                const sauceObject = req.file ? {
                     ...JSON.parse(req.body.sauce),
                     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
                 } : {
@@ -60,7 +60,7 @@ exports.modifySauce = (req, res, next) => {
                 Sauce.updateOne({
                         _id: req.params.id
                     }, {
-                        ...thingObject,
+                        ...sauceObject,
                         _id: req.params.id
                     })
                     .then(() => res.status(200).json({
@@ -114,8 +114,8 @@ exports.deleteSauce = (req, res, next) => {
 ///////////////////////////////
 exports.getAllSauces = (req, res, next) => {
     Sauce.find().then(
-        (things) => {
-            res.status(200).json(things);
+        (sauces) => {
+            res.status(200).json(sauces);
         }
     ).catch(
         (error) => {
