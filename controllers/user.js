@@ -49,7 +49,7 @@ exports.login = (req, res, next) => {
                     }
                     res.status(200).json({
                         userId: user._id,
-                        token: jwt.sign({
+                        token: jwt.sign({ // J'assigne un token à l'utilisateur
                                 userId: user._id
                             },
                             process.env.JWT_SECRET_KEY, { // Je cache cette donnée avec le .env
